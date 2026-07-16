@@ -33,10 +33,10 @@ if the motor doesn't respond, try swapping `A` and `B`.
 
 ### Torqeedo model
 
-This sketch has **not yet been tested against a real Torqeedo motor**. It's based
-on ArduPilot's documented `AP_Torqeedo` protocol, but the specific motor model
-and firmware version it has (or hasn't) been validated against is not yet known.
-Test carefully, without load, before relying on it.
+Target motor: **Torqeedo Travel 1103 CL** (long-shaft). This sketch has **not yet
+been tested against the real motor**. It's based on ArduPilot's documented
+`AP_Torqeedo` protocol, but hasn't been validated against this specific model
+and firmware version yet. Test carefully, without load, before relying on it.
 
 ### ⚠️ Safety
 
