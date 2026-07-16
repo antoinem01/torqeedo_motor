@@ -6,8 +6,8 @@ Arduino sketch that drives a Torqeedo motor over RS485, with a potentiometer for
 
 - Board: Arduino Uno
 - Pins:
-  - `2` — RS485 RX
-  - `3` — RS485 TX
+  - `2` — RS485 TX
+  - `3` — RS485 RX
   - `4` — RS485 DE (driver enable)
   - `A0` — potentiometer (speed control)
   - `5` — emergency stop (normally closed button between pin and GND)
