@@ -32,3 +32,13 @@ Only standard Arduino libraries are needed, no external dependencies:
 ## Uploading
 
 Open `Torqeedo_motor.ino` in the Arduino IDE (or use `arduino-cli`), select board **Arduino Uno**, and upload.
+
+## Credits
+
+The RS485 bus protocol (framing bytes `0xAC`/`0xAD`/`0xAE`, CRC8 checksum) is based on
+[ArduPilot's `AP_Torqeedo` driver](https://github.com/ArduPilot/ardupilot/tree/master/libraries/AP_Torqeedo).
+Many thanks to the ArduPilot project for documenting and implementing the Torqeedo bus protocol.
+
+## License
+
+GPLv3, see [LICENSE](LICENSE) — inherited from ArduPilot's GPLv3-licensed `AP_Torqeedo` driver, on which the protocol implementation is based.

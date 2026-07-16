@@ -1,3 +1,7 @@
+// Torqeedo RS485 bus protocol (framing bytes 0xAC/0xAD/0xAE, CRC8) is based on
+// ArduPilot's AP_Torqeedo driver: https://github.com/ArduPilot/ardupilot
+// (libraries/AP_Torqeedo), licensed under the GNU GPLv3. See LICENSE.
+
 #include <SoftwareSerial.h>
 #include <avr/wdt.h>
 #include <EEPROM.h>
