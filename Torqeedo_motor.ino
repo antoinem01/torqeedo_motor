@@ -6,10 +6,10 @@
 #define RS485_RX      3
 #define RS485_DE      4
 #define POT_PIN       A0
-#define NOODSTOP_PIN  5   // normaal gesloten knop tussen pin en GND
-#define DODE_MAN_PIN  6   // normaal open knop tussen pin en GND
+#define NOODSTOP_PIN  5   // normally closed button between pin and GND
+#define DODE_MAN_PIN  6   // normally open button between pin and GND
 
-#define EEPROM_FOUTEN 0   // EEPROM adres voor foutenteller
+#define EEPROM_FOUTEN 0   // EEPROM address for error counter
 
 SoftwareSerial rs485(RS485_RX, RS485_TX);
 
@@ -42,12 +42,12 @@ void schrijfByte(uint8_t b) {
 void stuurSnelheid(int16_t snelheid) {
   uint8_t vermogen = map(abs(snelheid), 0, 1000, 0, 100);
   uint8_t payload[6] = {
-    0x30,                        // adres: MOTOR
+    0x30,                        // address: MOTOR
     0x82,                        // message ID: DRIVE
     0x01,                        // flags: enable
-    vermogen,                    // motorvermogen 0-100
-    (uint8_t)(snelheid >> 8),    // snelheid hoog byte
-    (uint8_t)(snelheid & 0xFF)   // snelheid laag byte
+    vermogen,                    // motor power 0-100
+    (uint8_t)(snelheid >> 8),    // speed high byte
+    (uint8_t)(snelheid & 0xFF)   // speed low byte
   };
   uint8_t crc = crc8(payload, 6);
   digitalWrite(RS485_DE, HIGH);
@@ -78,42 +78,42 @@ void setup() {
   rs485.begin(19200);
 
   foutTeller = EEPROM.read(EEPROM_FOUTEN);
-  Serial.print("Opgeslagen fouten: ");
+  Serial.print("Stored errors: ");
   Serial.println(foutTeller);
 
-  wdt_enable(WDTO_2S);  // herstart Arduino als loop vastloopt
+  wdt_enable(WDTO_2S);  // restart Arduino if the loop hangs
   Serial.println("Start");
 }
 
 void loop() {
-  wdt_reset();  // vertel watchdog dat alles OK is
+  wdt_reset();  // tell the watchdog everything is OK
 
-  // Noodstop (normaal gesloten: LOW = OK, HIGH = ingedrukt = stop)
+  // Emergency stop (normally closed: LOW = OK, HIGH = pressed = stop)
   if (digitalRead(NOODSTOP_PIN) == HIGH) {
-    motorStop("noodstop");
+    motorStop("emergency stop");
     delay(100);
     return;
   }
 
-  // Dode man schakelaar (normaal open: LOW = losgelaten = stop)
+  // Dead man switch (normally open: LOW = released = stop)
   if (digitalRead(DODE_MAN_PIN) == LOW) {
-    motorStop("dode man");
+    motorStop("dead man switch");
     delay(100);
     return;
   }
 
-  // Potmeter lezen en omzetten
+  // Read potentiometer and convert
   int pot = analogRead(POT_PIN);
   int16_t doelSnelheid = map(pot, 0, 1023, 0, 1000);
 
-  // Zachte start/stop: max 10 eenheden per stap (100ms = max 100 eenheden/sec)
+  // Soft start/stop: max 10 units per step (100ms = max 100 units/sec)
   if (doelSnelheid > huidigSnelheid + 10)      huidigSnelheid += 10;
   else if (doelSnelheid < huidigSnelheid - 10) huidigSnelheid -= 10;
   else                                          huidigSnelheid = doelSnelheid;
 
   Serial.print("Pot: ");      Serial.print(pot);
-  Serial.print("  Doel: ");   Serial.print(doelSnelheid);
-  Serial.print("  Huidig: "); Serial.println(huidigSnelheid);
+  Serial.print("  Target: "); Serial.print(doelSnelheid);
+  Serial.print("  Current: "); Serial.println(huidigSnelheid);
 
   stuurSnelheid(huidigSnelheid);
   delay(100);

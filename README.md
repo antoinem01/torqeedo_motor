@@ -1,34 +1,34 @@
 # Torqeedo motor
 
-Arduino-sketch die een Torqeedo-motor aanstuurt via RS485, met een potmeter voor snelheidsregeling en twee veiligheidsschakelaars (noodstop en dodemansknop).
+Arduino sketch that drives a Torqeedo motor over RS485, with a potentiometer for speed control and two safety switches (emergency stop and dead man switch).
 
 ## Hardware
 
 - Board: Arduino Uno
-- Pinnen:
+- Pins:
   - `2` — RS485 RX
   - `3` — RS485 TX
   - `4` — RS485 DE (driver enable)
-  - `A0` — potmeter (snelheidsregeling)
-  - `5` — noodstop (normaal gesloten knop tussen pin en GND)
-  - `6` — dodemansknop (normaal open knop tussen pin en GND)
+  - `A0` — potentiometer (speed control)
+  - `5` — emergency stop (normally closed button between pin and GND)
+  - `6` — dead man switch (normally open button between pin and GND)
 
-## Werking
+## How it works
 
-- Leest de potmeter en stuurt de motor via een RS485-protocol met CRC8-checksum.
-- Snelheid wordt geleidelijk opgebouwd/afgebouwd (zachte start/stop, max 10 eenheden per 100 ms).
-- Bij noodstop of loslaten van de dodemansknop stopt de motor direct.
-- Een watchdog timer (2 s) herstart de Arduino als de loop vastloopt.
-- Het aantal fouten/stops wordt bijgehouden in EEPROM.
+- Reads the potentiometer and drives the motor via an RS485 protocol with a CRC8 checksum.
+- Speed is ramped up/down gradually (soft start/stop, max 10 units per 100 ms).
+- The motor stops immediately on emergency stop or when the dead man switch is released.
+- A watchdog timer (2 s) restarts the Arduino if the loop hangs.
+- The number of errors/stops is tracked in EEPROM.
 
 ## Libraries
 
-Alleen standaard Arduino-libraries nodig, geen externe dependencies:
+Only standard Arduino libraries are needed, no external dependencies:
 
 - `SoftwareSerial`
 - `EEPROM`
 - `avr/wdt`
 
-## Uploaden
+## Uploading
 
-Open `Torqeedo_motor.ino` in de Arduino IDE (of gebruik `arduino-cli`), selecteer board **Arduino Uno**, en upload.
+Open `Torqeedo_motor.ino` in the Arduino IDE (or use `arduino-cli`), select board **Arduino Uno**, and upload.
