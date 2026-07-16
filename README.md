@@ -13,6 +13,40 @@ Arduino sketch that drives a Torqeedo motor over RS485, with a potentiometer for
   - `5` — emergency stop (normally closed button between pin and GND)
   - `6` — dead man switch (normally open button between pin and GND)
 
+### RS485 wiring
+
+A cheap MAX485 breakout module is used to convert the Arduino's UART signal to the
+RS485 bus. On these modules DE and RE are usually tied together, so a single
+Arduino pin can drive both:
+
+| Arduino Uno | MAX485 module     |
+| ----------- | ------------------ |
+| `5V`        | `VCC`               |
+| `GND`       | `GND`               |
+| `2` (TX)    | `DI`                 |
+| `3` (RX)    | `RO`                 |
+| `4` (DE)    | `DE` + `RE` (tied together) |
+| —           | `A` / `B` → to the Torqeedo RS485 bus |
+
+Check the `A`/`B` polarity against the Torqeedo motor's connector documentation —
+if the motor doesn't respond, try swapping `A` and `B`.
+
+### Torqeedo model
+
+This sketch has **not yet been tested against a real Torqeedo motor**. It's based
+on ArduPilot's documented `AP_Torqeedo` protocol, but the specific motor model
+and firmware version it has (or hasn't) been validated against is not yet known.
+Test carefully, without load, before relying on it.
+
+### ⚠️ Safety
+
+This sketch controls a real motor, potentially on a boat. Bugs, wiring mistakes,
+or protocol misunderstandings can cause unexpected motor behavior. Always:
+
+- Test on the bench, out of the water, with the propeller removed or the boat secured, before any on-water use.
+- Verify the emergency stop and dead man switch actually cut power before trusting them.
+- Use at your own risk — this project comes with **no warranty**, see [LICENSE](LICENSE).
+
 ## How it works
 
 - Reads the potentiometer and drives the motor via an RS485 protocol with a CRC8 checksum.
