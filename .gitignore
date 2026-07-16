@@ -1,0 +1,14 @@
+build.options.json
+compile_commands.json
+includes.cache
+libraries.cache
+core/
+libraries/
+sketch/
+*.eep
+*.elf
+*.hex
+*.bin
+*.o
+*.d
+*.a
