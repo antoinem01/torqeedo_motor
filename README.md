@@ -4,14 +4,23 @@ Arduino sketch that drives a Torqeedo motor over RS485, with a potentiometer for
 
 ## Hardware
 
-- Board: Arduino Uno
-- Pins:
-  - `2` — RS485 TX
-  - `3` — RS485 RX
-  - `4` — RS485 DE (driver enable)
-  - `A0` — potentiometer (speed control)
-  - `5` — emergency stop (normally closed button between pin and GND)
-  - `6` — dead man switch (normally open button between pin and GND)
+Components:
+
+- Arduino Uno
+- MAX485 TTL-RS485 module
+- Potentiometer (speed control)
+- Emergency stop button (normally closed)
+- Dead man switch (normally open)
+- Torqeedo Travel 1103 CL motor
+
+Pins:
+
+- `2` — RS485 TX (to MAX485 `DI`)
+- `3` — RS485 RX (to MAX485 `RO`)
+- `4` — RS485 DE (driver enable, to MAX485 `DE`+`RE`)
+- `A0` — potentiometer wiper (speed control)
+- `5` — emergency stop (normally closed button between pin and GND)
+- `6` — dead man switch (normally open button between pin and GND)
 
 ### System diagram
 
