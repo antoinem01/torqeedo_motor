@@ -34,6 +34,7 @@ SoftwareSerial rs485(RS485_RX, RS485_TX);
 
 int16_t huidigSnelheid = 0;
 uint8_t foutTeller = 0;
+bool gestopt = false;   // true while a safety switch keeps the motor stopped
 
 uint8_t crc8(uint8_t *data, uint8_t len) {
   uint8_t crc = 0;
@@ -77,13 +78,19 @@ void stuurSnelheid(int16_t snelheid) {
   digitalWrite(RS485_DE, LOW);
 }
 
+// Keep the motor stopped. Logs the stop and bumps the EEPROM error counter only
+// once, on the transition into the stopped state, to avoid wearing out the EEPROM
+// while a switch is held (the loop runs every ~100 ms).
 void motorStop(const char* reden) {
   huidigSnelheid = 0;
   stuurSnelheid(0);
-  Serial.print("STOP: ");
-  Serial.println(reden);
-  foutTeller++;
-  EEPROM.write(EEPROM_FOUTEN, foutTeller);
+  if (!gestopt) {
+    Serial.print("STOP: ");
+    Serial.println(reden);
+    if (foutTeller < 255) foutTeller++;
+    EEPROM.update(EEPROM_FOUTEN, foutTeller);
+    gestopt = true;
+  }
 }
 
 void setup() {
@@ -121,9 +128,17 @@ void loop() {
     return;
   }
 
-  // Read potentiometer and convert
+  // Both safety switches OK again: allow the next stop to be logged.
+  gestopt = false;
+
+  // Read potentiometer and convert. Centre = stop: fully left = full reverse,
+  // middle = idle, fully right = full forward.
   int pot = analogRead(POT_PIN);
-  int16_t doelSnelheid = map(pot, 0, 1023, 0, 1000);
+  int16_t doelSnelheid = map(pot, 0, 1023, -1000, 1000);
+
+  // Dead zone around the centre so the motor doesn't creep at neutral (a pot
+  // rarely sits exactly at the middle).
+  if (abs(doelSnelheid) < 50) doelSnelheid = 0;
 
   // Soft start/stop: max 10 units per step (100ms = max 100 units/sec)
   if (doelSnelheid > huidigSnelheid + 10)      huidigSnelheid += 10;
