@@ -2,6 +2,10 @@
 
 Arduino sketch that drives a Torqeedo motor over RS485, with a potentiometer for speed control and two safety switches (emergency stop and dead man switch).
 
+## Documentation
+
+- [Torqeedo 1103CL aansturing](docs/torqeedo-1103cl-aansturing.md)
+
 ## Hardware
 
 Components:
