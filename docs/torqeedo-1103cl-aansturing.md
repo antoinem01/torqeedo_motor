@@ -39,7 +39,14 @@ De potmeter heeft 3 pinnen:
 | 2 | Middelste (wiper) | A0 |
 | 3 | Rechter buitenste | 5V |
 
-Pin 1 en 3 mogen omgedraaid — dat bepaalt alleen de draairichting.
+Pin 1 en 3 mogen omgedraaid — dat bepaalt alleen welke kant vooruit is.
+
+**Bediening (midden = stop):** de potmeterstand wordt gemapt op `-1000…+1000`.
+Helemaal naar één kant = vol achteruit, midden = stil, helemaal naar de andere
+kant = vol vooruit. Rond het midden zit een dode zone (~5%) zodat de motor bij
+neutraal niet kruipt. Een draaipotmeter heeft geen mechanische midden-klik, dus
+voor achteruit is een midden-detent potmeter of joystick/gashendel prettiger —
+dan voel je waar stop zit.
 
 ### Arduino → RS485-bordje
 

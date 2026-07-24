@@ -131,9 +131,14 @@ void loop() {
   // Both safety switches OK again: allow the next stop to be logged.
   gestopt = false;
 
-  // Read potentiometer and convert
+  // Read potentiometer and convert. Centre = stop: fully left = full reverse,
+  // middle = idle, fully right = full forward.
   int pot = analogRead(POT_PIN);
-  int16_t doelSnelheid = map(pot, 0, 1023, 0, 1000);
+  int16_t doelSnelheid = map(pot, 0, 1023, -1000, 1000);
+
+  // Dead zone around the centre so the motor doesn't creep at neutral (a pot
+  // rarely sits exactly at the middle).
+  if (abs(doelSnelheid) < 50) doelSnelheid = 0;
 
   // Soft start/stop: max 10 units per step (100ms = max 100 units/sec)
   if (doelSnelheid > huidigSnelheid + 10)      huidigSnelheid += 10;
