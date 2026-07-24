@@ -121,7 +121,7 @@ Only standard Arduino libraries are needed, no external dependencies:
 
 ## Uploading
 
-Open `Torqeedo_motor.ino` in the Arduino IDE (or use `arduino-cli`), select board **Arduino Uno**, and upload.
+Open `Torqeedo_motor/Torqeedo_motor.ino` in the Arduino IDE (or use `arduino-cli`), select board **Arduino Uno**, and upload.
 
 ## Credits
 
