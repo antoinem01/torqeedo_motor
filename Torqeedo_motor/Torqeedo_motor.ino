@@ -121,8 +121,10 @@ void loop() {
     return;
   }
 
-  // Dead man switch (normally open: LOW = released = stop)
-  if (digitalRead(DODE_MAN_PIN) == LOW) {
+  // Dead man switch (normally open button to GND, INPUT_PULLUP):
+  // held = closed = LOW = run, released = open = HIGH = stop. A broken or
+  // disconnected wire reads HIGH too, so it fails safe to stop.
+  if (digitalRead(DODE_MAN_PIN) == HIGH) {
     motorStop("dead man switch");
     delay(100);
     return;

@@ -13,7 +13,7 @@ en **altijd zonder belasting** (schroef eraf of boot vastgezet).
 
 - [ ] Schroef verwijderd, of boot stevig vastgezet zodat er geen stuwkracht kan ontstaan
 - [ ] Hoofdschakelaar / uittrekstekker UIT, accu losgekoppeld
-- [ ] Laatste `Torqeedo_motor.ino` geüpload (board **Arduino Uno**, upload zonder fouten)
+- [ ] Laatste `Torqeedo_motor/Torqeedo_motor.ino` geüpload (board **Arduino Uno**, upload zonder fouten)
 - [ ] Brandblusser / manier om snel de stroom eraf te halen binnen handbereik
 
 ## 1. Bedrading controleren (visueel, stroomloos)

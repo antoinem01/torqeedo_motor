@@ -157,7 +157,7 @@ Zoektermen:
 
 ## Arduino sketch
 
-De volledige sketch staat in [`Torqeedo_motor.ino`](../Torqeedo_motor.ino).
+De volledige sketch staat in [`Torqeedo_motor/Torqeedo_motor.ino`](../Torqeedo_motor/Torqeedo_motor.ino).
 
 ---
 
