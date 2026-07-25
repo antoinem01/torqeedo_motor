@@ -6,6 +6,7 @@ Arduino sketch that drives a Torqeedo motor over RS485, with a potentiometer for
 
 - [Torqeedo 1103CL aansturing](docs/torqeedo-1103cl-aansturing.md)
 - [Bench-test checklist](docs/bench-test-checklist.md)
+- [IP68 & trillingsbestendige opbouw](docs/ip68-robuuste-opbouw.md)
 
 ## Hardware
 
