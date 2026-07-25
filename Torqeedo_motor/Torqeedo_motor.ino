@@ -30,11 +30,18 @@
 
 #define EEPROM_FOUTEN 0   // EEPROM address for error counter
 
+#define COMMS_TIMEOUT_MS 1000  // fail-safe stop if no valid motor reply for this
+                               // long (only enforced once comms has been seen)
+
 SoftwareSerial rs485(RS485_RX, RS485_TX);
 
 int16_t huidigSnelheid = 0;
 uint8_t foutTeller = 0;
 bool gestopt = false;   // true while a safety switch keeps the motor stopped
+
+unsigned long laatsteReplyMs = 0;  // millis() of the last valid motor reply
+bool commsGezien = false;          // true once the motor has ever replied validly
+bool commsVerloren = false;        // edge flag: comms-loss already logged this event
 
 uint8_t crc8(uint8_t *data, uint8_t len) {
   uint8_t crc = 0;
@@ -78,6 +85,39 @@ void stuurSnelheid(int16_t snelheid) {
   digitalWrite(RS485_DE, LOW);
 }
 
+// Drain the RS485 receive buffer and reassemble any reply frame the motor sent
+// (same framing as we transmit: 0xAC start, 0xAD end, 0xAE escape + XOR 0x80,
+// trailing CRC8). Returns true if at least one complete, CRC-valid frame was
+// decoded. We only need "did the motor answer?", not the payload contents, so
+// a valid frame is enough to prove the bus and controller are alive. Parser
+// state is static so a frame split across calls is still reassembled.
+bool leesMotorReply() {
+  static uint8_t buf[32];
+  static uint8_t len = 0;
+  static bool inFrame = false;
+  static bool escape = false;
+  bool geldig = false;
+
+  while (rs485.available()) {
+    uint8_t b = rs485.read();
+    if (b == 0xAC) {            // start of frame (resync on any 0xAC)
+      inFrame = true; escape = false; len = 0;
+      continue;
+    }
+    if (!inFrame) continue;     // junk before a start byte
+    if (b == 0xAD) {            // end of frame: last byte is the CRC
+      inFrame = false;
+      if (len >= 2 && crc8(buf, len - 1) == buf[len - 1]) geldig = true;
+      continue;
+    }
+    if (b == 0xAE) { escape = true; continue; }  // next byte is XOR 0x80
+    if (escape) { b ^= 0x80; escape = false; }
+    if (len < sizeof(buf)) buf[len++] = b;
+    else inFrame = false;       // overflow: drop this frame
+  }
+  return geldig;
+}
+
 // Keep the motor stopped. Logs the stop and bumps the EEPROM error counter only
 // once, on the transition into the stopped state, to avoid wearing out the EEPROM
 // while a switch is held (the loop runs every ~100 ms).
@@ -107,12 +147,26 @@ void setup() {
   Serial.print("Stored errors: ");
   Serial.println(foutTeller);
 
+  laatsteReplyMs = millis();  // arm the comms clock; fail-safe stays dormant
+                              // until the motor has actually replied once
+
   wdt_enable(WDTO_2S);  // restart Arduino if the loop hangs
   Serial.println("Start");
 }
 
 void loop() {
   wdt_reset();  // tell the watchdog everything is OK
+
+  // Read any reply the motor sent since our last frame. A valid framed reply
+  // proves the RS485 link and the motor controller are alive.
+  if (leesMotorReply()) {
+    laatsteReplyMs = millis();
+    if (!commsGezien) {
+      Serial.println("Motor comms OK");  // fail-safe is now armed
+      commsGezien = true;
+    }
+    commsVerloren = false;
+  }
 
   // Emergency stop (normally closed: LOW = OK, HIGH = pressed = stop)
   if (digitalRead(NOODSTOP_PIN) == HIGH) {
@@ -132,6 +186,24 @@ void loop() {
 
   // Both safety switches OK again: allow the next stop to be logged.
   gestopt = false;
+
+  // Comms-loss fail-safe: once the motor has ever replied, a prolonged silence
+  // means a broken bus or a dead controller. Command stop and refuse to drive
+  // until replies resume, so we never keep pushing a link we've lost. If the
+  // motor never replies (commsGezien stays false) this stays dormant, so it
+  // can't brick a setup where the motor sends no status back.
+  if (commsGezien && (millis() - laatsteReplyMs) > COMMS_TIMEOUT_MS) {
+    huidigSnelheid = 0;
+    stuurSnelheid(0);
+    if (!commsVerloren) {
+      Serial.println("STOP: comms lost");
+      if (foutTeller < 255) foutTeller++;
+      EEPROM.update(EEPROM_FOUTEN, foutTeller);
+      commsVerloren = true;
+    }
+    delay(100);
+    return;
+  }
 
   // Read potentiometer and convert. Centre = stop: fully left = full reverse,
   // middle = idle, fully right = full forward.
