@@ -134,6 +134,13 @@ void motorStop(const char* reden) {
 }
 
 void setup() {
+  // Clear the reset flags and disable any watchdog carried over from a prior
+  // reset. Without this, a watchdog (or brown-out) reset can leave the WDT
+  // enabled with a short timeout, so the board resets again before setup()
+  // finishes — an endless bootloop. Must run before anything else.
+  MCUSR = 0;
+  wdt_disable();
+
   Serial.begin(9600);
 
   pinMode(RS485_DE, OUTPUT);
