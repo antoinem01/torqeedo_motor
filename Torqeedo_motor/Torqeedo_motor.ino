@@ -67,11 +67,17 @@ void schrijfByte(uint8_t b) {
 }
 
 void stuurSnelheid(int16_t snelheid) {
+  // Assert the enable flag only when actually commanding motion, matching
+  // ArduPilot's safe/neutral state. At zero speed the motor is disabled
+  // (flags 0, power 0), so a stop is a true motor-disable instead of "enabled
+  // at speed zero". Every safety stop (emergency stop, dead man, comms loss)
+  // routes through stuurSnelheid(0), so they all land in this disabled state.
   uint8_t vermogen = map(abs(snelheid), 0, 1000, 0, 100);
+  uint8_t flags = (snelheid != 0) ? 0x01 : 0x00;  // 0x01 = enable motor
   uint8_t payload[6] = {
     0x30,                        // address: MOTOR
     0x82,                        // message ID: DRIVE
-    0x01,                        // flags: enable
+    flags,                       // flags: enable only when moving
     vermogen,                    // motor power 0-100
     (uint8_t)(snelheid >> 8),    // speed high byte
     (uint8_t)(snelheid & 0xFF)   // speed low byte
