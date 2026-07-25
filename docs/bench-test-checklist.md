@@ -4,8 +4,11 @@ Doorloop deze lijst **op de werkbank**, vóór elk gebruik op het water. Test in
 volgorde hieronder: eerst alles zonder motorvoeding, daarna pas met de accu erop
 en **altijd zonder belasting** (schroef eraf of boot vastgezet).
 
-> ⚠️ Deze sketch is nog **niet gevalideerd tegen de echte motor**. Wees extra
-> voorzichtig: houd je hand bij de noodstop en de hoofdschakelaar.
+> ✅ De sketch is **gevalideerd tegen de echte motor** (banktest 2026-07-25,
+> onbelast, schroef in de lucht — vooruit én achteruit werkend). De aansturing
+> en het RS485-protocol kloppen dus. Wat nog **niet** is getest: gebruik onder
+> belasting en de definitieve voedingsopbouw (buck, zekeringen, hoofdschakelaar).
+> Blijf extra voorzichtig: houd je hand bij de noodstop en de hoofdschakelaar.
 
 ---
 

@@ -89,10 +89,19 @@ if the motor doesn't respond, try swapping `A` and `B`.
 
 ### Torqeedo model
 
-Target motor: **Torqeedo Travel 1103 CL** (long-shaft). This sketch has **not yet
-been tested against the real motor**. It's based on ArduPilot's documented
-`AP_Torqeedo` protocol, but hasn't been validated against this specific model
-and firmware version yet. Test carefully, without load, before relying on it.
+Target motor: **Torqeedo Travel 1103 CL** (long-shaft).
+
+**Status: validated against the real motor** (bench test, 2026-07-25). The sketch
+was tested against an actual Travel 1103 CL powered from an adjustable DC supply
+at 29 V, propeller in air (no load). The motor's controller drew ~0.06 A idle,
+responded to throttle, and the propeller ran both **forward and reverse** as
+commanded. The RS485 protocol (based on ArduPilot's `AP_Torqeedo`) works against
+this model and firmware.
+
+This validation was **no-load only**. The current bench rig is a breadboard
+lash-up, not a robust install, and the on-water power topology (buck converter,
+fuses, main switch) has not been built or tested yet. Keep testing carefully,
+without load, before relying on it on the water.
 
 ### ⚠️ Safety
 

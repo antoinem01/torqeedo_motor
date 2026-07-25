@@ -151,7 +151,7 @@ Zoektermen:
 | Watchdog timer | Arduino herstart zichzelf als de code vastloopt (timeout 2 seconden) |
 | Zachte start/stop | Snelheid verandert max 10 eenheden per 100ms (100 eenheden/sec) |
 | Foutlogging | Aantal stops wordt opgeslagen in EEPROM, zichtbaar na herstart via Serial Monitor |
-| Hardware (nog te doen) | Geïsoleerde RS485, waterproof behuizing, zekeringen op motorvoeding |
+| Hardware (nog te doen) | Weg van breadboard (solderen/perfboard), getwiste RS485-paar, zekeringen (~40A motor / ~1A logica), buck-converter i.p.v. USB, hoofdschakelaar, waterproof behuizing |
 
 ---
 
@@ -168,6 +168,32 @@ De volledige sketch staat in [`Torqeedo_motor/Torqeedo_motor.ino`](../Torqeedo_m
 3. Verbind RS485-bordje met de motorconnector (A+, B-, GND)
 4. Zet de motorvoeding aan (24V accu)
 5. Draai de potmeter — de motor zou moeten reageren
+
+### Uitgevoerde banktest (2026-07-25) — geslaagd ✅
+
+Getest tegen een echte Travel 1103 CL, onbelast (schroef in de lucht):
+
+- Motorvoeding: regelbare DC-voeding (BaseTech BT-305) op **29V, 5A-limiet**.
+  Logica (Arduino + RS485-bordje) apart gevoed via USB — met **gemeenschappelijke
+  massa** tussen USB-GND en de min van de DC-voeding.
+- Bij inschakelen trok de motorcontroller een **ruststroom van ~0,06A** (bewijs
+  dat de motorelektronica opstartte en op commando's wachtte).
+- Potmeter vooruit → schroef draaide vooruit; andere kant → schroef draaide
+  **achteruit**. Aansturing en protocol werken dus.
+
+**Nog niet getest:** gebruik onder belasting (in het water) en de definitieve
+voedingsopbouw (buck-converter, zekeringen, hoofdschakelaar). Een DC-voeding van
+5A is te zwak voor de motor onder belasting (~30A vol) — die is alleen geschikt
+voor deze onbelaste banktest.
+
+### Bekende valkuilen uit de banktest
+
+| Symptoom | Oorzaak / oplossing |
+|---|---|
+| `Pot: 0`, `Target: -1000` blijft hangen | 5V-kant van de potmeter kwam niet aan (los draadje / dode railhelft). Meet 5V tussen de twee buitenpennen van de pot. |
+| Alleen TXD-lampje knippert, RXD donker | Normaal zolang de motor niet aangesloten/antwoordend is: TXD = Arduino zendt, RXD licht pas op als de motor terugpraat. |
+| Motor reageert niet | `A`/`B` omwisselen; gemeenschappelijke massa ontbreekt; DE niet geschakeld. |
+| Breadboard-voeding valt steeds weg | Massief draad i.p.v. gevlochten, verse gaatjes, beide railhelften voeden. Breadboard is sowieso ongeschikt voor de eindopstelling (trillingen). |
 
 ---
 
