@@ -199,6 +199,10 @@ voor deze onbelaste banktest.
 
 ## Behuizing
 
+> Voor de volledige waterdichte én trillingsbestendige eindopbouw (weg van het
+> breadboard), zie [`ip68-robuuste-opbouw.md`](ip68-robuuste-opbouw.md). Hieronder
+> een korte samenvatting.
+
 **Type:** IP67 of IP68 afdichtingsbox (spatwaterdicht tot onderwaterdicht)
 
 **Formaat:** minimaal 15×10×6cm (Arduino Uno is 68×53mm)
