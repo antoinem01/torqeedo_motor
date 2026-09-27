@@ -12,3 +12,12 @@ sketch/
 *.o
 *.d
 *.a
+
+# KiCad: local UI state, caches and auto-backups
+*.kicad_prl
+fp-info-cache
+*-backups/
+*.kicad_pcb-bak
+*.kicad_sch-bak
+_autosave-*
+*.kicad_prl~
