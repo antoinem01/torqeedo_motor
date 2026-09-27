@@ -12,6 +12,8 @@ Schema **en** printontwerp voor de geïntegreerde besturingsprint uit
 | `torqeedo_pcb.kicad_pcb` | **printontwerp: geplaatst, gerouteerd, massavlakken** |
 | `fab/` | Gerbers + boorbestanden (`*-gerbers.zip`), BOM, plaatsingsbestand |
 | `pcb-top.png` / `pcb-bottom.png` | 3D-weergave van boven- en onderkant |
+| `ps1-buck-gauge.html` | pagina met de printweergaven + het meetvel voor PS1 |
+| `ps1-buck-gauge.svg` | alleen het meetvel — **printen op 100 %**, schaal 1:1 |
 
 ![Bovenkant](pcb-top.png)
 
@@ -86,10 +88,20 @@ Gecontroleerd met KiCad 9.0.2:
 
 ## Nakijken vóór je bestelt
 
-1. **PS1 buck-module** — de 1×4 header gaat uit van de padvolgorde
-   **IN+ / IN− / OUT+ / OUT−**. Leg dit naast de pinout van *jouw* module en pas
-   de footprint of de bedrading aan als die anders is. Het silkscreen-kader
-   (20 × 16 mm) is de ruimte die de module krijgt — controleer of hij past.
+1. **PS1 buck-module — moet hoe dan ook nog veranderen.** De 1×4 header is een
+   *placeholder* uit het schema: vier pads op één rij, 2,54 mm, 7,62 mm totaal.
+   Een MP1584EN-achtige module zet het ingangspaar aan de ene kant van een 22 mm
+   print en het uitgangspaar aan de andere — dat past daar niet in. Dit is dus een
+   **nieuwe footprint**, geen omgewisselde pinvolgorde.
+
+   Er is geen betrouwbare maatvoering te vinden: verkopers noemen allemaal
+   22 × 17 × 4 mm, maar **niemand publiceert gatposities**, en ze verschillen per
+   batch. Meet daarom je eigen module met
+   [`ps1-buck-gauge.svg`](ps1-buck-gauge.svg) — print op **100 %** (niet
+   "passend maken"), controleer eerst de kalibratiebalk op 100,0 mm, en lees op
+   het 1 mm-raster de vier gatposities af.
+
+   Het silkscreen-kader (20 × 16 mm) is de ruimte die de module nu krijgt.
 2. **TVS1 SM712** — aangenomen SOT-23-pinout is pin 1 = A, 2 = GND, 3 = B.
    Controleer tegen het datasheet (optioneel onderdeel, dus laag risico).
 3. **D1** — kathode (band) hoort aan de `+12V_PROT`-kant; zo is hij bedraad,
