@@ -21,3 +21,7 @@ fp-info-cache
 *.kicad_sch-bak
 _autosave-*
 *.kicad_prl~
+
+# Python
+__pycache__/
+*.pyc

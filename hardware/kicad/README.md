@@ -14,6 +14,7 @@ Schema **en** printontwerp voor de geïntegreerde besturingsprint uit
 | `pcb-top.png` / `pcb-bottom.png` | 3D-weergave van boven- en onderkant |
 | `ps1-buck-gauge.html` | pagina met de printweergaven + het meetvel voor PS1 |
 | `ps1-buck-gauge.svg` | alleen het meetvel — **printen op 100 %**, schaal 1:1 |
+| `tools/` | de scripts die deze print uit het schema genereren — zie [`tools/README.md`](tools/README.md) |
 
 ![Bovenkant](pcb-top.png)
 
@@ -134,3 +135,28 @@ schema; in de BOM verschijnen ze als `J_PWR?`. Dat is **cosmetisch** — netlist
 print en fabricagebestanden zijn correct (de print gebruikt de namen zonder
 `?`). Wil je het weg hebben, hernoem dan in het schema naar bijvoorbeeld
 `J_PWR1`; dan moeten de verwijzingen in `docs/pcb-geintegreerd.md` mee.
+
+---
+
+## Waar we gebleven zijn
+
+De print is **af en geverifieerd** (DRC 0/0, netlist gelijk aan het schema) en
+staat als `pcb-rev-A` in git. Hij is **nog niet besteld**, en dat moet ook nog
+niet: er is één openstaand punt.
+
+**Geblokkeerd op:** de vier gatposities van jouw buck-module. PS1 heeft nu een
+placeholder-footprint die sowieso niet klopt (zie *Nakijken vóór je bestelt*,
+punt 1). Meet de module met [`ps1-buck-gauge.svg`](ps1-buck-gauge.svg) — printen
+op 100 %, eerst de kalibratiebalk op 100,0 mm controleren.
+
+**Zodra die vier coördinaten er zijn:**
+
+1. PS1 wordt **twee 1×2-headers** in plaats van één blok, zodat de module in een
+   voetje zit en er zonder soldeerbout af kan — op een boot telt dat zwaarder
+   dan op een bureau, en korte draadbruggen vangen een millimeter afwijking op.
+2. `place.py` (tabel `PLACE`) en het silkscreen-kader in `finish.py` aanpassen.
+3. `./tools/regenerate.sh` draaien tot hij schoon is, dan `--install`.
+4. Gerbers opnieuw exporteren en taggen als `pcb-rev-B`. `pcb-rev-A` blijft staan.
+
+De overige vier punten uit *Nakijken vóór je bestelt* (TVS1-pinout,
+D1-oriëntatie, C2/C12, J_FTDI VCC) zijn nog niet nagelopen.
